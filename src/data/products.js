@@ -17,6 +17,7 @@ export const combos = [
     discount: 20,
     category: "combo",
     type: "combos",
+    image: combolimpieza,
   },
   {
     id: "combo-renovador",
@@ -26,6 +27,7 @@ export const combos = [
     discount: 20,
     category: "combo",
     type: "combos",
+    image: comborefresh,
   },
   {
     id: "combo-protector",
