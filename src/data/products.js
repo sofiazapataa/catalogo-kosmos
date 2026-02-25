@@ -6,6 +6,8 @@ import serumHidratante from "../assets/images/serum-hidratante.jpg";
 import serumNiacinamida from "../assets/images/serum-niacinamida.jpg";
 import serumReafirmante from "../assets/images/serum-reafirmante.jpg";
 import tonicoExfoliante from "../assets/images/tonico-exfoliante.jpg";
+import comboLimpieza from "../assets/images/combo-limpieza.jpg";
+import comboRefresh from "../assets/images/combo-refresh.jpg";
 
 // ✅ Combos
 export const combos = [
