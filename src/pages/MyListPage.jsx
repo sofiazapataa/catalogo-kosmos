@@ -1,30 +1,43 @@
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useList } from "../context/ListContext";
 
-function buildReserveText(items, total) {
+const TRANSFER_OFF = 0.05;
+
+function buildReserveText(items, totalNormal, totalTransfer, payTransfer) {
   const lines = items.map(
-    (it) => `- ${it.title} x${it.qty} ($${(it.price * it.qty).toLocaleString("es-AR")})`
+    (it) =>
+      `- ${it.title} x${it.qty} ($${(it.price * it.qty).toLocaleString("es-AR")})`
   );
-  return `Hola! Quiero reservar:\n${lines.join("\n")}\n\nTotal: $${total.toLocaleString(
+
+  const paymentLine = payTransfer
+    ? "Pago: transferencia (5% OFF)"
+    : "Pago: a coordinar";
+
+  return `Hola! Quiero reservar:\n${lines.join(
+    "\n"
+  )}\n\nTotal: $${totalNormal.toLocaleString(
     "es-AR"
-  )}`;
+  )}\nTotal transferencia (5% OFF): $${totalTransfer.toLocaleString(
+    "es-AR"
+  )}\n${paymentLine}`;
 }
 
 export default function MyListPage() {
-  const { items, clearList, total, addToList, removeOne, deleteItem } = useList();
+  const { items, clearList, total, addToList, removeOne, deleteItem } =
+    useList();
 
-  const reserveText = buildReserveText(items, total);
+  const [payTransfer, setPayTransfer] = useState(false);
 
-  async function copyReserve() {
-    try {
-      await navigator.clipboard.writeText(reserveText);
-      alert("Mensaje copiado ✅ Pegalo en WhatsApp/Instagram DM");
-    } catch {
-      alert("No se pudo copiar. Copialo manualmente desde el texto.");
-    }
-  }
+  const totalTransfer = useMemo(() => {
+    return Math.round(total * (1 - TRANSFER_OFF));
+  }, [total]);
+
+  const reserveText = useMemo(() => {
+    return buildReserveText(items, total, totalTransfer, payTransfer);
+  }, [items, total, totalTransfer, payTransfer]);
 
   const whatsappHref =
     "https://wa.me/542262357366?text=" + encodeURIComponent(reserveText);
@@ -66,7 +79,9 @@ export default function MyListPage() {
                         >
                           −
                         </button>
+
                         <div className="qtypill">{it.qty}</div>
+
                         <button
                           className="iconbtn"
                           type="button"
@@ -104,27 +119,43 @@ export default function MyListPage() {
                   ))}
                 </div>
 
+                {/* ✅ Pago + CTA */}
                 <div className="reserve-actions">
-                  <button className="btn" type="button" onClick={copyReserve}>
-                    Copiar mensaje
-                  </button>
+                  <label className="pay-toggle">
+                    <input
+                      type="checkbox"
+                      checked={payTransfer}
+                      onChange={(e) => setPayTransfer(e.target.checked)}
+                    />
+                    <span>Pagar con transferencia (5% OFF)</span>
+                  </label>
 
-                  <a className="btn btn-outline" href={whatsappHref} target="_blank" rel="noreferrer">
-                    Enviar por WhatsApp
+                  <a
+                    className="btn"
+                    href={whatsappHref}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Comprar por WhatsApp
                   </a>
                 </div>
-
-                <details className="reserve-preview">
-                  <summary>Ver mensaje</summary>
-                  <pre>{reserveText}</pre>
-                </details>
               </>
             )}
           </div>
 
-          <div className="panel-foot">
-            <strong>Total</strong>
-            <strong>${total.toLocaleString("es-AR")}</strong>
+          {/* ✅ Totales (normal + transferencia) */}
+          <div className="panel-foot totals">
+            <div className="totals-left">
+              <strong>Total</strong>
+              <span className="totals-sub">
+                Transferencia (5% OFF):{" "}
+                <strong>${totalTransfer.toLocaleString("es-AR")}</strong>
+              </span>
+            </div>
+
+            <div className="totals-right">
+              <strong>${total.toLocaleString("es-AR")}</strong>
+            </div>
           </div>
         </div>
       </main>

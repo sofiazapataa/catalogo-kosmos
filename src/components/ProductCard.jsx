@@ -1,23 +1,31 @@
+import { useMemo } from "react";
 import { useList } from "../context/ListContext";
+
+const TRANSFER_OFF = 0.05;
+
+function formatARS(value) {
+  return value.toLocaleString("es-AR");
+}
 
 export default function ProductCard({ product }) {
   const { addToList, removeOne, getQty } = useList();
   const qty = getQty(product.id);
 
+  const transferPrice = useMemo(() => {
+    const p = Number(product.price || 0);
+    return Math.round(p * (1 - TRANSFER_OFF));
+  }, [product.price]);
+
   return (
     <article className="card">
       {product.image ? (
         <div className="card-image">
-          {product.discount > 0 && (
-            <div className="badge">-{product.discount}%</div>
-          )}
+          {product.discount > 0 && <div className="badge">-{product.discount}%</div>}
           <img src={product.image} alt={product.title} loading="lazy" />
         </div>
       ) : (
         <div className="card-image card-image--empty">
-          {product.discount > 0 && (
-            <div className="badge">-{product.discount}%</div>
-          )}
+          {product.discount > 0 && <div className="badge">-{product.discount}%</div>}
         </div>
       )}
 
@@ -28,7 +36,13 @@ export default function ProductCard({ product }) {
       </div>
 
       <div className="card-foot">
-        <div className="card-price">${product.price.toLocaleString("es-AR")}</div>
+        <div className="priceblock">
+          <div className="card-price">${formatARS(product.price)}</div>
+          <div className="card-price-off">
+            Transferencia: <strong>${formatARS(transferPrice)}</strong>{" "}
+            <span className="off-tag">(5% OFF)</span>
+          </div>
+        </div>
 
         {qty > 0 ? (
           <div className="qtybar">

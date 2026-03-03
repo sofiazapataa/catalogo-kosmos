@@ -187,6 +187,23 @@ body{
 /* =========================
    PRODUCT CARD PREMIUM
 ========================= */
+/* Price block (normal + transferencia) */
+.priceblock{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.card-price-off{
+  font-size:12px;
+  color: var(--muted);
+  line-height:1.2;
+}
+
+.off-tag{
+  font-weight:800;
+  color: var(--green);
+}
 .card{
   background:var(--card);
   border:1px solid rgba(0,0,0,0.06);
@@ -429,6 +446,45 @@ body{
   margin-top:14px;
   flex-wrap:wrap;
 }
+/* Totales (normal + transferencia) */
+.totals{
+  align-items:flex-start;
+}
+
+.totals-left{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.totals-sub{
+  font-size:12px;
+  color: var(--muted);
+}
+
+.totals-right{
+  display:flex;
+  align-items:flex-start;
+}
+
+/* Toggle pago transferencia */
+.pay-toggle{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:#fafafa;
+  cursor:pointer;
+  user-select:none;
+}
+
+.pay-toggle input{
+  width:18px;
+  height:18px;
+  accent-color: var(--green);
+}
 
 .reserve-preview{
   margin-top:10px;
@@ -586,4 +642,16 @@ body{
 @media (min-width: 1024px){
   .brand-big{ font-size:44px; }
   .grid{ grid-template-columns: repeat(3, 1fr); }
+}
+
+/* En mobile: que el botón ocupe todo el ancho */
+@media (max-width: 480px){
+  .reserve-actions{
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .reserve-actions .btn,
+  .pay-toggle{
+    width:100%;
+  }
 }
