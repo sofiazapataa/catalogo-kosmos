@@ -97,15 +97,28 @@ export const stock = [
 
   // SERUMS
   {
-    id: "boosting-drops",
-    title: "Boosting Drops",
-    desc: "Serum booster para potenciar tu rutina",
-    price: 47900,
-    discount: 0,
-    category: "stock",
-    type: "serums",
-    image: serumHidratante,
-  },
+  id: "boosting-drops",
+  title: "Boosting Drops",
+  desc: "Serum booster para potenciar tu rutina",
+  price: 47900,
+  discount: 0,
+  category: "stock",
+  type: "serums",
+  image: serumHidratante,
+
+  // 👇 NUEVO
+  images: [serumHidratante], // acá sumás más imágenes cuando tengas
+  skinType: "Apto para todo tipo de piel",
+  benefits: [
+    "Potencia la rutina y mejora la absorción",
+    "Aporta luminosidad",
+    "Hidratación ligera"
+  ],
+  howToUse:
+    "Aplicar 3–4 gotas sobre piel limpia. Luego continuar con tu crema. AM/PM.",
+  details:
+    "Ideal como primer serum para comenzar una rutina y potenciar otros activos.",
+},
   {
     id: "balancing-drops",
     title: "Balancing Drops",
@@ -136,7 +149,7 @@ export const stock = [
     discount: 0,
     category: "stock",
     type: "cremas",
-    image: cremaHidratanteSuave,
+    image: cremaSuave,
   },
   {
     id: "aqua-potion",
@@ -146,6 +159,6 @@ export const stock = [
     discount: 0,
     category: "stock",
     type: "cremas",
-    image: cremaHidratanteReparadora, // (reemplazar por foto real luego)
+    image: cremaReparadora, // (reemplazar por foto real luego)
   },
 ];

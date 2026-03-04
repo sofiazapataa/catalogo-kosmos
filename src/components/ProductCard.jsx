@@ -4,10 +4,10 @@ import { useList } from "../context/ListContext";
 const TRANSFER_OFF = 0.05;
 
 function formatARS(value) {
-  return value.toLocaleString("es-AR");
+  return Number(value || 0).toLocaleString("es-AR");
 }
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, onOpen }) {
   const { addToList, removeOne, getQty } = useList();
   const qty = getQty(product.id);
 
@@ -16,20 +16,58 @@ export default function ProductCard({ product }) {
     return Math.round(p * (1 - TRANSFER_OFF));
   }, [product.price]);
 
+  const canOpen = typeof onOpen === "function";
+
+  function handleKeyOpen(e) {
+    if (!canOpen) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onOpen();
+    }
+  }
+
   return (
     <article className="card">
       {product.image ? (
-        <div className="card-image">
-          {product.discount > 0 && <div className="badge">-{product.discount}%</div>}
+        <div
+          className="card-image"
+          onClick={canOpen ? onOpen : undefined}
+          onKeyDown={handleKeyOpen}
+          role={canOpen ? "button" : undefined}
+          tabIndex={canOpen ? 0 : undefined}
+          aria-label={canOpen ? `Ver ${product.title}` : undefined}
+        >
+          {product.discount > 0 && (
+            <div className="badge">-{product.discount}%</div>
+          )}
           <img src={product.image} alt={product.title} loading="lazy" />
         </div>
       ) : (
-        <div className="card-image card-image--empty">
-          {product.discount > 0 && <div className="badge">-{product.discount}%</div>}
+        <div
+          className="card-image card-image--empty"
+          onClick={canOpen ? onOpen : undefined}
+          onKeyDown={handleKeyOpen}
+          role={canOpen ? "button" : undefined}
+          tabIndex={canOpen ? 0 : undefined}
+          aria-label={canOpen ? `Ver ${product.title}` : undefined}
+        >
+          {product.discount > 0 && (
+            <div className="badge">-{product.discount}%</div>
+          )}
         </div>
       )}
 
-      <h3 className="card-title">{product.title}</h3>
+      <h3
+        className="card-title"
+        onClick={canOpen ? onOpen : undefined}
+        onKeyDown={handleKeyOpen}
+        role={canOpen ? "button" : undefined}
+        tabIndex={canOpen ? 0 : undefined}
+        aria-label={canOpen ? `Ver ${product.title}` : undefined}
+        style={canOpen ? { cursor: "pointer" } : undefined}
+      >
+        {product.title}
+      </h3>
 
       <div className="card-body">
         <p className="card-desc">{product.desc}</p>
@@ -69,7 +107,11 @@ export default function ProductCard({ product }) {
             </button>
           </div>
         ) : (
-          <button className="btn btn-small" onClick={() => addToList(product)}>
+          <button
+            className="btn btn-small"
+            type="button"
+            onClick={() => addToList(product)}
+          >
             Agregar a la lista
           </button>
         )}

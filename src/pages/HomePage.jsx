@@ -6,6 +6,7 @@ import { useProducts } from "../hooks/useProducts";
 import CatalogControls from "../components/CatalogControls";
 import SectionHeader from "../components/SectionHeader";
 import { filterProducts } from "../utils/catalog";
+import ProductModal from "../components/ProductModal"; // ✅ NUEVO
 
 export default function HomePage() {
   const { combos, stock, loading, error } = useProducts();
@@ -16,16 +17,13 @@ export default function HomePage() {
   const [showAllCombos, setShowAllCombos] = useState(false);
   const [showAllStock, setShowAllStock] = useState(false);
 
+  const [selected, setSelected] = useState(null); // ✅ NUEVO
+
   const combosProcessed = useMemo(() => {
-    let filtered = filterProducts(combos, query);
+    const filtered = filterProducts(combos, query);
 
-    if (category === "combos") {
-      return filtered;
-    }
-
-    if (category !== "all") {
-      return []; // si el filtro es otra categoría, no mostramos combos
-    }
+    if (category === "combos") return filtered;
+    if (category !== "all") return []; // si es otra categoría, no mostramos combos
 
     return filtered;
   }, [combos, query, category]);
@@ -37,20 +35,13 @@ export default function HomePage() {
       filtered = filtered.filter((p) => p.type === category);
     }
 
-    if (category === "combos") {
-      return []; // si filtro combos, no mostramos stock
-    }
+    if (category === "combos") return []; // si filtro combos, no mostramos stock
 
     return filtered;
   }, [stock, query, category]);
 
-  const combosToShow = showAllCombos
-    ? combosProcessed
-    : combosProcessed.slice(0, 4);
-
-  const stockToShow = showAllStock
-    ? stockProcessed
-    : stockProcessed.slice(0, 6);
+  const combosToShow = showAllCombos ? combosProcessed : combosProcessed.slice(0, 4);
+  const stockToShow = showAllStock ? stockProcessed : stockProcessed.slice(0, 6);
 
   const nothingFound =
     !loading && !error && combosProcessed.length + stockProcessed.length === 0;
@@ -82,7 +73,11 @@ export default function HomePage() {
 
             <div className="grid">
               {combosToShow.map((p) => (
-                <ProductCard key={p.id} product={p} />
+                <ProductCard
+                  key={p.id}
+                  product={p}
+                  onOpen={() => setSelected(p)} // ✅ NUEVO
+                />
               ))}
             </div>
           </>
@@ -100,7 +95,11 @@ export default function HomePage() {
 
             <div className="grid">
               {stockToShow.map((p) => (
-                <ProductCard key={p.id} product={p} />
+                <ProductCard
+                  key={p.id}
+                  product={p}
+                  onOpen={() => setSelected(p)} // ✅ NUEVO
+                />
               ))}
             </div>
           </>
@@ -114,6 +113,11 @@ export default function HomePage() {
       </main>
 
       <Footer />
+
+      {/* ✅ MODAL */}
+      {selected ? (
+        <ProductModal product={selected} onClose={() => setSelected(null)} />
+      ) : null}
     </>
   );
 }
