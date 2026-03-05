@@ -11,6 +11,10 @@ function formatARS(value) {
 export default function ProductCard({ product, onOpen }) {
   const navigate = useNavigate();
   const { addToList, removeOne, getQty } = useList();
+
+  // ✅ FIX: si por algún motivo llega undefined, NO rompemos la app
+  if (!product) return null;
+
   const qty = getQty(product.id);
 
   const transferPrice = useMemo(() => {
@@ -39,7 +43,9 @@ export default function ProductCard({ product, onOpen }) {
           tabIndex={canOpen ? 0 : undefined}
           aria-label={canOpen ? `Ver ${product.title}` : undefined}
         >
-          {product.discount > 0 && <div className="badge">-{product.discount}%</div>}
+          {product.discount > 0 && (
+            <div className="badge">-{product.discount}%</div>
+          )}
           <img src={product.image} alt={product.title} loading="lazy" />
         </div>
       ) : (
@@ -51,7 +57,9 @@ export default function ProductCard({ product, onOpen }) {
           tabIndex={canOpen ? 0 : undefined}
           aria-label={canOpen ? `Ver ${product.title}` : undefined}
         >
-          {product.discount > 0 && <div className="badge">-{product.discount}%</div>}
+          {product.discount > 0 && (
+            <div className="badge">-{product.discount}%</div>
+          )}
         </div>
       )}
 
@@ -80,31 +88,43 @@ export default function ProductCard({ product, onOpen }) {
           </div>
         </div>
 
+        {/* ✅ "Ver lista" solo cuando qty > 0 */}
         <div className="card-actions">
           {qty > 0 ? (
-            <div className="qtybar">
-              <button
-                className="iconbtn"
-                type="button"
-                onClick={() => removeOne(product.id)}
-                aria-label="Restar uno"
-                title="Restar uno"
-              >
-                −
-              </button>
+            <>
+              <div className="qtybar">
+                <button
+                  className="iconbtn"
+                  type="button"
+                  onClick={() => removeOne(product.id)}
+                  aria-label="Restar uno"
+                  title="Restar uno"
+                >
+                  −
+                </button>
 
-              <span className="qtypill">x{qty}</span>
+                <span className="qtypill">x{qty}</span>
+
+                <button
+                  className="iconbtn"
+                  type="button"
+                  onClick={() => addToList(product)}
+                  aria-label="Sumar uno"
+                  title="Sumar uno"
+                >
+                  +
+                </button>
+              </div>
 
               <button
-                className="iconbtn"
+                className="btn btn-outline btn-small"
                 type="button"
-                onClick={() => addToList(product)}
-                aria-label="Sumar uno"
-                title="Sumar uno"
+                onClick={() => navigate("/mi-lista")}
+                title="Ver mi lista"
               >
-                +
+                Ver lista
               </button>
-            </div>
+            </>
           ) : (
             <button
               className="btn btn-small"
@@ -114,15 +134,6 @@ export default function ProductCard({ product, onOpen }) {
               Agregar a la lista
             </button>
           )}
-
-          <button
-            className="btn btn-outline btn-small"
-            type="button"
-            onClick={() => navigate("/mi-lista")}
-            title="Ver mi lista"
-          >
-            Ver lista
-          </button>
         </div>
       </div>
     </article>

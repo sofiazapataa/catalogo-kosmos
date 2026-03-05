@@ -50,7 +50,7 @@ export default function HomePage() {
     <>
       <Header />
 
-      <main className="container">
+      <main className="container" id="productos">
         <CatalogControls
           query={query}
           onQueryChange={setQuery}

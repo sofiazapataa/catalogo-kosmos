@@ -1,16 +1,15 @@
-import { Link, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useList } from "../context/ListContext";
 
-export default function Header({ right }) {
+export default function Header() {
   const { count } = useList();
-  const location = useLocation();
-  const isMyList = location.pathname === "/mi-lista";
 
   return (
     <header className="topbar">
+      {/* Parte superior */}
       <div className="topbar-inner">
         <div className="brand">
-          <div className="brand-small">Catalogo</div>
+          <div className="brand-small">Catálogo</div>
           <div className="brand-big">Kosmos</div>
           <div className="brand-sub">Stock limitado - 2026</div>
         </div>
@@ -22,18 +21,47 @@ export default function Header({ right }) {
             <div className="contact-sub">(2262) 357366</div>
             <div className="contact-sub">sofizapata2004@gmail.com</div>
           </div>
-
-          <div className="topbar-cta">
-            {!isMyList ? (
-              <Link className="btn" to="/mi-lista">
-                Mi Lista {count > 0 ? `(${count})` : ""}
-              </Link>
-            ) : (
-              right
-            )}
-          </div>
         </div>
       </div>
+
+      {/* Navbar */}
+      <nav className="topbar-nav" aria-label="Navegación principal">
+        <div className="nav-inner">
+          <div className="nav-left">
+            <NavLink
+              to="/"
+              end
+              className={({ isActive }) => (isActive ? "navlink navlink-on" : "navlink")}
+            >
+              Productos
+            </NavLink>
+
+            <NavLink
+              to="/sobre-la-marca"
+              className={({ isActive }) => (isActive ? "navlink navlink-on" : "navlink")}
+            >
+              Sobre la marca
+            </NavLink>
+
+            <NavLink
+              to="/contacto"
+              className={({ isActive }) => (isActive ? "navlink navlink-on" : "navlink")}
+            >
+              Contacto
+            </NavLink>
+
+            <NavLink
+              to="/mi-lista"
+              className={({ isActive }) =>
+                isActive ? "navlink navlink-on navlink-cart" : "navlink navlink-cart"
+              }
+            >
+              Mi Lista
+              {count > 0 ? <span className="nav-badge">{count}</span> : null}
+            </NavLink>
+          </div>
+        </div>
+      </nav>
     </header>
   );
 }
