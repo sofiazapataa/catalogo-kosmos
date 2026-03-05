@@ -134,7 +134,6 @@ body{
   gap:14px;
 }
 
-/* Section header (ver más / pills) */
 .section-head{
   display:flex;
   justify-content:space-between;
@@ -224,7 +223,6 @@ body{
   border-color: rgba(63,79,25,0.18);
 }
 
-/* Imagen */
 .card-image{
   width:100%;
   aspect-ratio: 1 / 1;
@@ -280,11 +278,9 @@ body{
   border: 1px solid rgba(255,255,255,0.55);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-
   box-shadow: 0 10px 24px rgba(0,0,0,0.12);
 }
 
-/* Texto */
 .card-title{
   margin:0 0 8px;
   font-size:14px;
@@ -303,7 +299,7 @@ body{
 
 .card-foot{
   display:flex;
-  align-items:center;
+  align-items:flex-end;
   justify-content:space-between;
   gap:10px;
   margin-top:12px;
@@ -347,6 +343,14 @@ body{
 }
 .iconbtn:active{ transform: scale(0.96); }
 
+/* ✅ acciones de card (Agregar / Ver lista) */
+.card-actions{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  align-items:stretch;
+}
+
 /* =========================
    PANELS (Mi Lista)
 ========================= */
@@ -374,7 +378,6 @@ body{
   border-top:1px solid var(--border);
 }
 
-/* list rows (mobile first) */
 .list-row{
   display:grid;
   grid-template-columns: 1fr;
@@ -436,10 +439,7 @@ body{
   flex-wrap:wrap;
 }
 
-/* Totales (normal + transferencia) */
-.totals{
-  align-items:flex-start;
-}
+.totals{ align-items:flex-start; }
 .totals-left{
   display:flex;
   flex-direction:column;
@@ -454,7 +454,6 @@ body{
   align-items:flex-start;
 }
 
-/* Toggle pago transferencia */
 .pay-toggle{
   display:flex;
   align-items:center;
@@ -541,117 +540,6 @@ body{
   background:#f0f0f0;
 }
 
-.modal-nav{
-  position:absolute;
-  top:50%;
-  transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
-  border-radius: 14px;
-  border: 1px solid rgba(0,0,0,0.08);
-  background: rgba(255,255,255,0.92);
-  cursor:pointer;
-  font-size: 24px;
-  font-weight: 900;
-}
-.modal-nav-left{ left: 12px; }
-.modal-nav-right{ right: 12px; }
-
-.modal-dots{
-  position:absolute;
-  left:0;
-  right:0;
-  bottom: 10px;
-  display:flex;
-  justify-content:center;
-  gap: 8px;
-}
-
-.dot{
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.85);
-  background: rgba(255,255,255,0.6);
-  cursor:pointer;
-}
-.dot-on{ background: #fff; }
-
-.modal-info{
-  padding: 14px 14px 18px;
-}
-
-.modal-title{
-  margin: 0 0 6px;
-  font-size: 18px;
-  font-weight: 900;
-  color: #2b3512;
-}
-
-.modal-desc{
-  margin: 0 0 12px;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.35;
-}
-
-.modal-pricebox{
-  padding: 12px 0;
-  margin: 12px 0 14px;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
-}
-
-.modal-price-main{
-  font-size: 22px;
-  font-weight: 900;
-  color: var(--green);
-  line-height: 1.1;
-}
-
-.modal-price-transfer{
-  margin-top: 6px;
-  font-size: 13px;
-  color: #666;
-}
-.modal-price-transfer strong{ color: var(--green); }
-.modal-price-transfer .off-tag{
-  font-weight: 800;
-  color: var(--green);
-}
-
-.modal-chip{
-  font-size: 12px;
-  background: #f2f4ee;
-  border: 1px solid #dfe5d1;
-  color: var(--green);
-  padding: 8px 10px;
-  border-radius: 12px;
-  margin: 10px 0 6px;
-}
-
-.modal-block{ margin-top: 14px; }
-.modal-block h4{
-  margin: 0 0 6px;
-  font-size: 13px;
-  font-weight: 900;
-}
-.modal-block p, .modal-block li{
-  font-size: 13px;
-  color: #444;
-  line-height: 1.4;
-}
-.modal-block ul{
-  margin: 0;
-  padding-left: 18px;
-}
-
-.modal-actions{
-  margin-top: 16px;
-  display:flex;
-  justify-content:flex-start;
-}
-
 /* =========================
    FOOTER (NO fijo)
 ========================= */
@@ -703,8 +591,6 @@ body{
 /* =========================
    BREAKPOINTS
 ========================= */
-
-/* Mobile micro-ajustes */
 @media (max-width: 480px){
   .reserve-actions{
     flex-direction:column;
@@ -716,7 +602,6 @@ body{
   }
 }
 
-/* 640px: tablet */
 @media (min-width: 640px){
   .topbar-inner{
     flex-direction:row;
@@ -757,6 +642,12 @@ body{
   .card-desc{ font-size:12px; }
   .iconbtn{ width:34px; height:34px; }
 
+  /* ✅ card-actions en línea en tablet/desktop */
+  .card-actions{
+    flex-direction:row;
+    align-items:center;
+  }
+
   .list-row{
     grid-template-columns: 120px 1fr 140px;
     padding:12px 6px;
@@ -774,26 +665,6 @@ body{
   .wpp-fab{ bottom: 18px; }
 }
 
-/* 820px: modal en 2 columnas */
-@media (min-width: 820px){
-  .modal{
-    grid-template-columns: 1.05fr 1fr;
-  }
-
-  .modal-media{ padding: 14px; }
-
-  .modal-img,
-  .modal-img-empty{
-    max-height: 420px;
-    height: 420px;
-  }
-
-  .modal-info{
-    padding: 18px 18px 20px;
-  }
-}
-
-/* 1024px: desktop */
 @media (min-width: 1024px){
   .brand-big{ font-size:44px; }
   .grid{ grid-template-columns: repeat(3, 1fr); }

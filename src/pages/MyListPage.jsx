@@ -1,166 +1,130 @@
-import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { useList } from "../context/ListContext";
 
 const TRANSFER_OFF = 0.05;
 
-function buildReserveText(items, totalNormal, totalTransfer, payTransfer) {
-  const lines = items.map(
-    (it) =>
-      `- ${it.title} x${it.qty} ($${(it.price * it.qty).toLocaleString("es-AR")})`
-  );
-
-  const paymentLine = payTransfer
-    ? "Pago: transferencia (5% OFF)"
-    : "Pago: a coordinar";
-
-  return `Hola! Quiero reservar:\n${lines.join(
-    "\n"
-  )}\n\nTotal: $${totalNormal.toLocaleString(
-    "es-AR"
-  )}\nTotal transferencia (5% OFF): $${totalTransfer.toLocaleString(
-    "es-AR"
-  )}\n${paymentLine}`;
+function formatARS(value) {
+  return Number(value || 0).toLocaleString("es-AR");
 }
 
-export default function MyListPage() {
-  const { items, clearList, total, addToList, removeOne, deleteItem } =
-    useList();
+export default function ProductCard({ product, onOpen }) {
+  const navigate = useNavigate();
+  const { addToList, removeOne, getQty } = useList();
+  const qty = getQty(product.id);
 
-  const [payTransfer, setPayTransfer] = useState(false);
+  const transferPrice = useMemo(() => {
+    const p = Number(product.price || 0);
+    return Math.round(p * (1 - TRANSFER_OFF));
+  }, [product.price]);
 
-  const totalTransfer = useMemo(() => {
-    return Math.round(total * (1 - TRANSFER_OFF));
-  }, [total]);
+  const canOpen = typeof onOpen === "function";
 
-  const reserveText = useMemo(() => {
-    return buildReserveText(items, total, totalTransfer, payTransfer);
-  }, [items, total, totalTransfer, payTransfer]);
-
-  const whatsappHref =
-    "https://wa.me/542262357366?text=" + encodeURIComponent(reserveText);
+  function handleKeyOpen(e) {
+    if (!canOpen) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onOpen();
+    }
+  }
 
   return (
-    <>
-      <Header
-        right={
-          <Link className="btn btn-outline" to="/">
-            Volver
-          </Link>
-        }
-      />
+    <article className="card">
+      {product.image ? (
+        <div
+          className="card-image"
+          onClick={canOpen ? onOpen : undefined}
+          onKeyDown={handleKeyOpen}
+          role={canOpen ? "button" : undefined}
+          tabIndex={canOpen ? 0 : undefined}
+          aria-label={canOpen ? `Ver ${product.title}` : undefined}
+        >
+          {product.discount > 0 && (
+            <div className="badge">-{product.discount}%</div>
+          )}
+          <img src={product.image} alt={product.title} loading="lazy" />
+        </div>
+      ) : (
+        <div
+          className="card-image card-image--empty"
+          onClick={canOpen ? onOpen : undefined}
+          onKeyDown={handleKeyOpen}
+          role={canOpen ? "button" : undefined}
+          tabIndex={canOpen ? 0 : undefined}
+          aria-label={canOpen ? `Ver ${product.title}` : undefined}
+        >
+          {product.discount > 0 && (
+            <div className="badge">-{product.discount}%</div>
+          )}
+        </div>
+      )}
 
-      <main className="container">
-        <div className="panel">
-          <div className="panel-head">
-            <h2>Mi Lista</h2>
-            <button className="linklike" type="button" onClick={clearList}>
-              Borrar lista
-            </button>
-          </div>
+      <h3
+        className="card-title"
+        onClick={canOpen ? onOpen : undefined}
+        onKeyDown={handleKeyOpen}
+        role={canOpen ? "button" : undefined}
+        tabIndex={canOpen ? 0 : undefined}
+        aria-label={canOpen ? `Ver ${product.title}` : undefined}
+        style={canOpen ? { cursor: "pointer" } : undefined}
+      >
+        {product.title}
+      </h3>
 
-          <div className="panel-body">
-            {items.length === 0 ? (
-              <p style={{ opacity: 0.7 }}>Tu lista está vacía.</p>
-            ) : (
-              <>
-                <div className="list-table">
-                  {items.map((it) => (
-                    <div className="list-row" key={it.id}>
-                      <div className="qtyctrl">
-                        <button
-                          className="iconbtn"
-                          type="button"
-                          onClick={() => removeOne(it.id)}
-                          aria-label="Restar uno"
-                          title="Restar uno"
-                        >
-                          −
-                        </button>
+      <div className="card-body">
+        <p className="card-desc">{product.desc}</p>
+      </div>
 
-                        <div className="qtypill">{it.qty}</div>
-
-                        <button
-                          className="iconbtn"
-                          type="button"
-                          onClick={() => addToList(it)}
-                          aria-label="Sumar uno"
-                          title="Sumar uno"
-                        >
-                          +
-                        </button>
-                      </div>
-
-                      <div className="name">
-                        <div className="name-title">{it.title}</div>
-                        <div className="name-sub">
-                          Unit: ${it.price.toLocaleString("es-AR")}
-                        </div>
-                      </div>
-
-                      <div className="rightcol">
-                        <div className="price">
-                          ${(it.price * it.qty).toLocaleString("es-AR")}
-                        </div>
-
-                        <button
-                          className="trash"
-                          type="button"
-                          onClick={() => deleteItem(it.id)}
-                          aria-label="Eliminar producto"
-                          title="Eliminar"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* ✅ Pago + CTA */}
-                <div className="reserve-actions">
-                  <label className="pay-toggle">
-                    <input
-                      type="checkbox"
-                      checked={payTransfer}
-                      onChange={(e) => setPayTransfer(e.target.checked)}
-                    />
-                    <span>Pagar con transferencia (5% OFF)</span>
-                  </label>
-
-                  <a
-                    className="btn"
-                    href={whatsappHref}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Comprar por WhatsApp
-                  </a>
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* ✅ Totales (normal + transferencia) */}
-          <div className="panel-foot totals">
-            <div className="totals-left">
-              <strong>Total</strong>
-              <span className="totals-sub">
-                Transferencia (5% OFF):{" "}
-                <strong>${totalTransfer.toLocaleString("es-AR")}</strong>
-              </span>
-            </div>
-
-            <div className="totals-right">
-              <strong>${total.toLocaleString("es-AR")}</strong>
-            </div>
+      <div className="card-foot">
+        <div className="priceblock">
+          <div className="card-price">${formatARS(product.price)}</div>
+          <div className="card-price-off">
+            Transferencia: <strong>${formatARS(transferPrice)}</strong>{" "}
+            <span className="off-tag">(5% OFF)</span>
           </div>
         </div>
-      </main>
+ {/* ✅ Botones: Agregar / Ver lista */}
+        <div className="card-actions">
+          {qty > 0 ? (
+            <div className="qtybar">
+              <button
+                className="iconbtn"
+                type="button"
+                onClick={() => removeOne(product.id)}
+                aria-label="Restar uno"
+                title="Restar uno"
+              >
+                −
+              </button>
 
-      <Footer />
-    </>
+              <span className="qtypill">x{qty}</span>
+
+              <button
+                className="iconbtn"
+                type="button"
+                onClick={() => addToList(product)}
+                aria-label="Sumar uno"
+                title="Sumar uno"
+              >
+                +
+              </button>
+            </div>
+          ) : (
+            <button className="btn btn-small" type="button" onClick={() => addToList(product)}>
+              Agregar a la lista
+            </button>
+          )}
+
+          <button
+            className="btn btn-outline btn-small"
+            type="button"
+            onClick={() => navigate("/mi-lista")}
+            title="Ver mi lista"
+          >
+            Ver lista
+          </button>
+        </div>
+      </div>
+    </article>
   );
 }
